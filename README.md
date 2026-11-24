@@ -23,7 +23,7 @@ node serve.ts
 
 No build step, no network request: `game/index.html` runs offline from static
 files in a desktop browser. three.js 0.160.0 is vendored under
-`game/vendor/three.module.js` (MIT).
+`game/vendor/three.module.min.js` (MIT).
 
 ## What's in the game
 
@@ -92,13 +92,13 @@ game/src/input.js        keyboard + mouse-drag look
 game/src/audio.js        WebAudio synth sound
 game/src/shots.js        deterministic ?shot= scenes
 game/src/main.js         game loop, screens, save/load
-game/vendor/three.module.js  three.js 0.160.0 (MIT)
+game/vendor/three.module.min.js  three.js 0.160.0 (MIT)
 ```
 
 ## License
 
 MIT — see [LICENSE](LICENSE). three.js is MIT-licensed; its license header is
-in `game/vendor/three.module.js`.
+in `game/vendor/three.module.min.js`.
 
 ---
 
