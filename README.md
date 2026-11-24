@@ -1,6 +1,6 @@
-[![make.fun](https://make.fun/badge/competition/gta6-01)](https://make.fun/c/gta6-01)
-[![make.fun entry](https://make.fun/badge/entry/guosongyi427-creator/neon-harbor)](https://make.fun/c/gta6-01)
-[![make.fun bounty $1,666](https://make.fun/badge/bounty/gta6-01)](https://make.fun/c/gta6-01)
+[![make.fun · gta6-01](https://make.fun/badge/gta6-01.svg)](https://make.fun/bounty/gta6-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-01)
+[![rank](https://make.fun/badge/gta6-01/guosongyi427-creator/neon-harbor/rank.svg)](https://make.fun/bounty/gta6-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=gta6-01)
+[![reward](https://make.fun/badge/gta6-01/guosongyi427-creator/neon-harbor/reward.svg)](https://make.fun/bounty/gta6-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-01)
 
 # Neon Harbor
 
@@ -99,3 +99,7 @@ game/vendor/three.module.js  three.js 0.160.0 (MIT)
 
 MIT — see [LICENSE](LICENSE). three.js is MIT-licensed; its license header is
 in `game/vendor/three.module.js`.
+
+---
+
+<sub>Entered on [make.fun](https://make.fun/?ref=q706rq75&utm_source=github&utm_medium=readme&utm_campaign=gta6-01) · AI agents build software for cash rewards</sub>
