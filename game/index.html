@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Neon Harbor — Open-World Crime Game</title>
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #1a0f1e; font-family: "Segoe UI", Arial, sans-serif; }
+  #game { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+  #hud { position: fixed; inset: 0; pointer-events: none; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.8); z-index: 5; }
+  #cash { position: absolute; top: 14px; right: 190px; font-size: 26px; font-weight: 800; color: #7dff9a; }
+  #stars { position: absolute; top: 14px; right: 20px; font-size: 26px; letter-spacing: 2px; color: #ffd23f; }
+  #stars .off { color: rgba(255,255,255,.25); }
+  #healthWrap { position: absolute; top: 52px; right: 20px; width: 150px; height: 12px; background: rgba(0,0,0,.55); border: 1px solid #fff; }
+  #health { height: 100%; width: 100%; background: linear-gradient(90deg,#ff5a5a,#ff9a3d); }
+  #speed { position: absolute; bottom: 18px; right: 20px; font-size: 30px; font-weight: 800; }
+  #speed small { font-size: 13px; color: #ffb3d9; }
+  #mission { position: absolute; top: 14px; left: 14px; max-width: 340px; background: rgba(10,6,20,.62); border-left: 4px solid #ff4d8d; padding: 10px 12px; border-radius: 4px; }
+  #missionTitle { font-size: 16px; font-weight: 800; color: #ffd23f; }
+  #missionBrief { font-size: 13px; line-height: 1.45; color: #f2e9ff; margin-top: 3px; }
+  #missionDist { font-size: 12px; color: #9be7ff; margin-top: 4px; }
+  #minimap { position: absolute; bottom: 14px; left: 14px; border: 2px solid rgba(255,255,255,.65); border-radius: 50%; background: rgba(10,10,26,.75); }
+  #toast { position: absolute; top: 22%; left: 50%; transform: translateX(-50%); font-size: 30px; font-weight: 900; color: #ffe45e; text-shadow: 0 2px 10px #000; opacity: 0; transition: opacity .3s; text-align: center; }
+  #hint { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%); font-size: 13px; color: #e8e8ff; background: rgba(0,0,0,.45); padding: 6px 12px; border-radius: 20px; white-space: nowrap; }
+  .screen { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: #fff; z-index: 10; background: linear-gradient(180deg, rgba(20,4,32,.55), rgba(20,4,32,.82)); }
+  .screen h1 { font-size: 64px; margin: 0; letter-spacing: 4px; color: #ff5e8a; text-shadow: 0 0 24px #ff2d78, 0 4px 0 #7a1038; }
+  .screen h2 { font-size: 20px; margin: 6px 0 18px; color: #ffd23f; font-weight: 600; letter-spacing: 2px; }
+  .screen p { max-width: 620px; line-height: 1.6; font-size: 15px; color: #efe6ff; margin: 6px 0; }
+  .screen .controls { font-size: 13px; background: rgba(0,0,0,.5); padding: 12px 18px; border-radius: 8px; margin: 14px 0; line-height: 1.9; }
+  .screen button { pointer-events: auto; font-size: 20px; font-weight: 800; padding: 13px 42px; border: none; border-radius: 8px; background: linear-gradient(180deg,#ff5e8a,#d81b60); color: #fff; cursor: pointer; box-shadow: 0 4px 0 #7a1038; margin-top: 10px; }
+  .screen button:hover { filter: brightness(1.15); }
+  .hidden { display: none !important; }
+  #status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+</style>
+</head>
+<body>
+<canvas id="game" aria-label="Neon Harbor: an open-world crime game. Drive, steal cars, outrun the police and finish six story missions."></canvas>
+<div id="hud" class="hidden">
+  <div id="mission"><div id="missionTitle">FIRST WHEELS</div><div id="missionBrief"></div><div id="missionDist"></div></div>
+  <div id="cash">$0</div>
+  <div id="stars"></div>
+  <div id="healthWrap"><div id="health"></div></div>
+  <div id="speed">0<small> MPH</small></div>
+  <canvas id="minimap" width="160" height="160"></canvas>
+  <div id="toast"></div>
+  <div id="hint">WASD move / drive &nbsp;·&nbsp; E steal car &nbsp;·&nbsp; F punch &nbsp;·&nbsp; Space brake &nbsp;·&nbsp; P pause &nbsp;·&nbsp; M mute</div>
+</div>
+<div id="screen-title" class="screen">
+  <h1>NEON HARBOR</h1>
+  <h2>AN OPEN-WORLD CRIME STORY &nbsp;·&nbsp; SUNSET CITY, 400 × 400 m</h2>
+  <p>You are <b>Jax Marlow</b>, a wheelman fresh out of lockup, back in Neon Harbor with $40 and a
+  debt to the Harbor Crew. Steal cars, outrun the Harbor PD, and run six jobs — from a first
+  joyride to <b>The Big Score</b> — to buy your freedom.</p>
+  <div class="controls">WASD — move / drive &nbsp;·&nbsp; Mouse drag — look &nbsp;·&nbsp; E — steal / enter car &nbsp;·&nbsp; F — punch<br>
+  SPACE — brake &nbsp;·&nbsp; SHIFT — sprint &nbsp;·&nbsp; P — pause &nbsp;·&nbsp; M — mute &nbsp;·&nbsp; Progress saves automatically</div>
+  <button id="btn-start">START ENGINE</button>
+  <p id="continue-line" class="hidden">Save found — your cash and missions carry on.</p>
+</div>
+<div id="screen-pause" class="screen hidden">
+  <h1 style="font-size:44px">PAUSED</h1>
+  <p>Neon Harbor waits for no one. Well — except now.</p>
+  <button id="btn-resume">RESUME</button>
+  <button id="btn-restart" style="background:linear-gradient(180deg,#5a6cff,#2b3a9e)">RESTART STORY</button>
+</div>
+<div id="screen-over" class="screen hidden">
+  <h1 id="over-title" style="font-size:52px">BUSTED</h1>
+  <h2 id="over-sub">THE HARBOR PD CAUGHT UP WITH YOU</h2>
+  <p id="over-stats"></p>
+  <button id="btn-retry">TRY AGAIN</button>
+</div>
+<div id="screen-win" class="screen hidden">
+  <h1 style="font-size:52px;color:#7dff9a;text-shadow:0 0 24px #19c37d,0 4px 0 #0b5e3c">THE BIG SCORE</h1>
+  <h2>YOU DID IT — NEON HARBOR IS YOURS</h2>
+  <p id="win-stats"></p>
+  <button id="btn-again">KEEP CRUISING (FREE ROAM)</button>
+</div>
+<p id="status" role="status" aria-live="polite"></p>
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.js" } }
+</script>
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
